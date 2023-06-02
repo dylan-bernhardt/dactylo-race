@@ -14,3 +14,6 @@ Tout d'abord, le serveur host se met en attente de suffisammenet de joueurs. Une
 L'application utilise une barrière pour attendre le nombre de joueurs. La barrière peut cependant être cassée par l'hôte pour lancer le jeu avec un nombre de joueurs inférieur au nombre recommandé.   
 La phrase à taper est envoyée à chaque joueur via un socket.   
 *Un sémaphore permet de détecter lorsqu'un joueur à écrit correctement la phrase et termine ainsi le jeu.*
+
+##  Compilation
+-W -Wall -ansi -pedantic
