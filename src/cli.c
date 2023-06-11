@@ -1,55 +1,55 @@
-#include "pse.h"
+#include "app.h"
 #include "menu.h"
 
 #define CMD "client"
 
 int main(int argc, char *argv[])
 {
-  int soc, ret;
-  struct sockaddr_in *adrServ;
-  char ligne[LIGNE_MAX];
-  int lgEcr;
+    int soc, ret;
+    struct sockaddr_in *adrServ;
+    char ligne[LIGNE_MAX];
+    int lgEcr;
 
-  if (argc != 3)
-    erreur("usage: %s machine port\n", argv[0]);
+    if (argc != 3)
+        erreur("usage: %s machine port\n", argv[0]);
 
-  printf("%s: creating a socket\n", CMD);
-  soc = socket(AF_INET, SOCK_STREAM, 0);
-  if (soc < 0)
-    erreur_IO("socket");
+    printf("%s: creating a socket\n", CMD);
+    soc = socket(AF_INET, SOCK_STREAM, 0);
+    if (soc < 0)
+        erreur_IO("socket");
 
-  printf("%s: DNS resolving for %s, port %s\n", CMD, argv[1], argv[2]);
-  adrServ = resolv(argv[1], argv[2]);
-  if (adrServ == NULL)
-    erreur("adresse %s port %s inconnus\n", argv[1], argv[2]);
+    printf("%s: DNS resolving for %s, port %s\n", CMD, argv[1], argv[2]);
+    adrServ = resolv(argv[1], argv[2]);
+    if (adrServ == NULL)
+        erreur("adresse %s port %s inconnus\n", argv[1], argv[2]);
 
-  printf("%s: adr %s, port %hu\n", CMD,
-         stringIP(ntohl(adrServ->sin_addr.s_addr)),
-         ntohs(adrServ->sin_port));
+    printf("%s: adr %s, port %hu\n", CMD,
+           stringIP(ntohl(adrServ->sin_addr.s_addr)),
+           ntohs(adrServ->sin_port));
 
-  printf("%s: connecting the socket\n", CMD);
-  ret = connect(soc, (struct sockaddr *)adrServ, sizeof(struct sockaddr_in));
-  if (ret < 0)
-    erreur_IO("connect");
+    printf("%s: connecting the socket\n", CMD);
+    ret = connect(soc, (struct sockaddr *)adrServ, sizeof(struct sockaddr_in));
+    if (ret < 0)
+        erreur_IO("connect");
 
-  printf("test1");
-  start();
-  pseudo();
-  printf("test2");
+    printf("test1");
+    start();
 
-  printf("ligne> ");
-  if (fgets(ligne, LIGNE_MAX, stdin) == NULL)
-    erreur("fgets nul\n");
+    printf("test2");
 
-  lgEcr = ecrireLigne(soc, ligne);
-  if (lgEcr == -1)
-    erreur_IO("ecrireLigne");
+    printf("ligne> ");
+    if (fgets(ligne, LIGNE_MAX, stdin) == NULL)
+        erreur("fgets nul\n");
 
-  printf("Done.\n");
-  printf("%s: %d bytes sent\n", CMD, lgEcr);
+    lgEcr = ecrireLigne(soc, ligne);
+    if (lgEcr == -1)
+        erreur_IO("ecrireLigne");
 
-  if (close(soc) == -1)
-    erreur_IO("close");
+    printf("Done.\n");
+    printf("%s: %d bytes sent\n", CMD, lgEcr);
 
-  exit(EXIT_SUCCESS);
+    if (close(soc) == -1)
+        erreur_IO("close");
+
+    exit(EXIT_SUCCESS);
 }
