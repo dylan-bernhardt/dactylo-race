@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     initializes variables
     */
     char my_gamertag[50];
-    int soc, ret, lgEcr;
+    int soc, ret;
     struct sockaddr_in *adrServ;
 
     /*
@@ -48,10 +48,16 @@ int main(int argc, char *argv[])
     /*
     sends gamertag to the server
     */
-    lgEcr = ecrireLigne(soc, my_gamertag);
-    if (lgEcr == -1)
+    if (ecrireLigne(soc, my_gamertag) == -1)
         erreur_IO("ecrireLigne");
 
+    /*
+    Asks if everyone is ready
+    */
+    ready();
+    /*if (ecrireLigne(soc, "ready") == -1)
+        erreur_IO("ecrireLigne");
+    */
     /*
     close the connection with the server
     */

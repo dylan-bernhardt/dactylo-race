@@ -7,4 +7,5 @@
 void start();
 void clear();
 void gamertag(char gamertag[50]);
+void ready();
 #endif

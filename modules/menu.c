@@ -11,6 +11,16 @@ void start()
     clear();
 }
 
+void ready()
+{
+    clear();
+    printf("Please press entrer when you are ready");
+    fputs("            ", stdout);
+    puts("\n\n\n######################################################################");
+    getchar();
+    clear();
+}
+
 void clear()
 {
     system("clear");
