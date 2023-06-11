@@ -23,8 +23,8 @@ void clear()
     return;
 }
 
-void pseudo(char pseudo_gamer[50])
+void gamertag(char gamertag[50])
 {
-    printf("\tChose a gametag : \t");
-    scanf("%s", pseudo_gamer);
+    printf("\tChose a gamertag : \t");
+    fgets(gamertag, 50, stdin);
 }

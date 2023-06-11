@@ -6,5 +6,5 @@
 #ifndef YO
 void start();
 void clear();
-void pseudo(char pseudo_gamer[50]);
+void gamertag(char gamertag[50]);
 #endif
