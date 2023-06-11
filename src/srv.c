@@ -2,6 +2,10 @@
 
 #define CMD "serveur"
 
+int fdJournal;
+void *sessionClient(void *arg);
+void remiseAZeroJournal(void);
+
 int main(int argc, char *argv[])
 {
     short port;
@@ -10,6 +14,7 @@ int main(int argc, char *argv[])
     unsigned int lgAdrClient;
     char ligne[LIGNE_MAX];
     int lgLue;
+    DataThread *dataThread;
 
     if (argc != 2)
         erreur("usage: %s port\n", argv[0]);
@@ -34,23 +39,28 @@ int main(int argc, char *argv[])
     if (ret < 0)
         erreur_IO("listen");
 
-    printf("%s: accepting a connection\n", CMD);
-    lgAdrClient = sizeof(adrClient);
-    canal = accept(ecoute, (struct sockaddr *)&adrClient, &lgAdrClient);
-    if (canal < 0)
-        erreur_IO("accept");
+    while (VRAI)
+    {
+        printf("%s: accepting a connection\n", CMD);
+        canal = accept(ecoute, (struct sockaddr *)&adrClient, &lgAdrClient);
+        if (canal < 0)
+            erreur_IO("accept");
 
-    printf("%s: adr %s, port %hu\n", CMD,
-           stringIP(ntohl(adrClient.sin_addr.s_addr)),
-           ntohs(adrClient.sin_port));
+        printf("%s: adr %s, port %hu\n", CMD,
+               stringIP(ntohl(adrClient.sin_addr.s_addr)), ntohs(adrClient.sin_port));
 
-    lgLue = lireLigne(canal, ligne);
-    if (lgLue < 0)
-        erreur_IO("lireLigne");
-    else if (lgLue == 0)
-        erreur("arret client\n");
+        dataThread = ajouterDataThread();
+        if (dataThread == NULL)
+            erreur_IO("ajouter data thread");
 
-    printf("%s: reception %d octets : \"%s\"\n", CMD, lgLue, ligne);
+        dataThread->spec.canal = canal;
+        ret = pthread_create(&dataThread->spec.id, NULL, sessionClient,
+                             &dataThread->spec);
+        if (ret != 0)
+            erreur_IO("creation thread");
+
+        joinDataThread();
+    }
 
     if (close(canal) == -1)
         erreur_IO("close canal");
@@ -59,4 +69,60 @@ int main(int argc, char *argv[])
         erreur_IO("close ecoute");
 
     exit(EXIT_SUCCESS);
+}
+
+void *sessionClient(void *arg)
+{
+    DataSpec *dataTh = (DataSpec *)arg;
+    int canal;
+    int fin = FAUX;
+    char ligne[LIGNE_MAX];
+    int lgLue;
+
+    canal = dataTh->canal;
+
+    while (!fin)
+    {
+        lgLue = lireLigne(canal, ligne);
+        if (lgLue < 0)
+            erreur_IO("lireLigne");
+        else if (lgLue == 0)
+            erreur("interruption client\n");
+
+        printf("%s: reception %d octets : \"%s\"\n", CMD, lgLue, ligne);
+
+        if (strcmp(ligne, "fin") == 0)
+        {
+            printf("%s: fin client\n", CMD);
+            fin = VRAI;
+        }
+        else if (strcmp(ligne, "init") == 0)
+        {
+            printf("%s: remise a zero journal\n", CMD);
+            remiseAZeroJournal();
+        }
+        else if (ecrireLigne(fdJournal, ligne) != -1)
+        {
+            printf("%s: ligne de %d octets ecrite dans journal\n", CMD, lgLue);
+        }
+        else
+            erreur_IO("ecriture journal");
+    } // fin while
+
+    if (close(canal) == -1)
+        erreur_IO("fermeture canal");
+
+    dataTh->libre = VRAI;
+
+    pthread_exit(NULL);
+}
+
+void remiseAZeroJournal(void)
+{
+    if (close(fdJournal) == -1)
+        erreur_IO("raz journal - fermeture");
+
+    fdJournal = open("journal.log", O_WRONLY | O_TRUNC | O_APPEND, 0644);
+    if (fdJournal == -1)
+        erreur_IO("raz journal - ouverture");
 }
