@@ -32,8 +32,10 @@ int main(int argc, char *argv[])
   if (ret < 0)
     erreur_IO("connect");
 
+  printf("test1");
   start();
   pseudo();
+  printf("test2");
 
   printf("ligne> ");
   if (fgets(ligne, LIGNE_MAX, stdin) == NULL)

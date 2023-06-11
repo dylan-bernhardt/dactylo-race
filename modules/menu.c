@@ -1,5 +1,4 @@
 #include <unistd.h>
-#include <time.h>
 #include "menu.h"
 
 void start()
