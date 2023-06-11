@@ -5,6 +5,7 @@
 
 int main(int argc, char *argv[])
 {
+    char pseudo_gamer[50];
     int soc, ret;
     struct sockaddr_in *adrServ;
     char ligne[LIGNE_MAX];
@@ -32,10 +33,8 @@ int main(int argc, char *argv[])
     if (ret < 0)
         erreur_IO("connect");
 
-    printf("test1");
     start();
-
-    printf("test2");
+    pseudo(pseudo_gamer);
 
     printf("ligne> ");
     if (fgets(ligne, LIGNE_MAX, stdin) == NULL)
