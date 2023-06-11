@@ -1,8 +1,10 @@
 #include "pse.h"
+#include "menu.h"
 
-#define CMD   "client"
+#define CMD "client"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   int soc, ret;
   struct sockaddr_in *adrServ;
   char ligne[LIGNE_MAX];
@@ -12,7 +14,7 @@ int main(int argc, char *argv[]) {
     erreur("usage: %s machine port\n", argv[0]);
 
   printf("%s: creating a socket\n", CMD);
-  soc = socket (AF_INET, SOCK_STREAM, 0);
+  soc = socket(AF_INET, SOCK_STREAM, 0);
   if (soc < 0)
     erreur_IO("socket");
 
@@ -22,22 +24,25 @@ int main(int argc, char *argv[]) {
     erreur("adresse %s port %s inconnus\n", argv[1], argv[2]);
 
   printf("%s: adr %s, port %hu\n", CMD,
-	        stringIP(ntohl(adrServ->sin_addr.s_addr)),
-	        ntohs(adrServ->sin_port));
+         stringIP(ntohl(adrServ->sin_addr.s_addr)),
+         ntohs(adrServ->sin_port));
 
   printf("%s: connecting the socket\n", CMD);
   ret = connect(soc, (struct sockaddr *)adrServ, sizeof(struct sockaddr_in));
   if (ret < 0)
     erreur_IO("connect");
 
+  start();
+  pseudo();
+
   printf("ligne> ");
   if (fgets(ligne, LIGNE_MAX, stdin) == NULL)
     erreur("fgets nul\n");
-  
+
   lgEcr = ecrireLigne(soc, ligne);
   if (lgEcr == -1)
     erreur_IO("ecrireLigne");
-  
+
   printf("Done.\n");
   printf("%s: %d bytes sent\n", CMD, lgEcr);
 
