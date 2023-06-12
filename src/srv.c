@@ -2,38 +2,57 @@
 
 #define CMD "serveur"
 
-int fdJournal;
-void *sessionClient(void *arg);
-void remiseAZeroJournal(void);
+struct Player
+{
+    char gamertag[50];
+};
+typedef struct Player Player;
+
+void *sessionClient(void *arg); /*thread*/
 
 int main(int argc, char *argv[])
 {
+    /*
+    iniatilizes variables
+    */
     short port;
     int ecoute, canal, ret;
     struct sockaddr_in adrEcoute, adrClient;
     unsigned int lgAdrClient;
-    char ligne[LIGNE_MAX];
-    int lgLue;
     DataThread *dataThread;
 
+    initDataThread();
+    /*
+    error if no argument
+    */
     if (argc != 2)
         erreur("usage: %s port\n", argv[0]);
 
+    /*
+    ascci to integer for the port number
+    */
     port = (short)atoi(argv[1]);
 
-    printf("%s: creating a socket\n", CMD);
+    /*
+    creates the socket
+    */
     ecoute = socket(AF_INET, SOCK_STREAM, 0);
     if (ecoute < 0)
         erreur_IO("socket");
 
+    /*
+    binds the socket to the server
+    */
     adrEcoute.sin_family = AF_INET;
     adrEcoute.sin_addr.s_addr = INADDR_ANY;
     adrEcoute.sin_port = htons(port);
-    printf("%s: binding to INADDR_ANY address on port %d\n", CMD, port);
     ret = bind(ecoute, (struct sockaddr *)&adrEcoute, sizeof(adrEcoute));
     if (ret < 0)
         erreur_IO("bind");
 
+    /*
+    configuring socket as a server
+    */
     printf("%s: listening to socket\n", CMD);
     ret = listen(ecoute, 5);
     if (ret < 0)
@@ -41,6 +60,9 @@ int main(int argc, char *argv[])
 
     while (VRAI)
     {
+        /*
+        waits for a connexion and accepts it
+        */
         printf("%s: accepting a connection\n", CMD);
         canal = accept(ecoute, (struct sockaddr *)&adrClient, &lgAdrClient);
         if (canal < 0)
@@ -49,6 +71,9 @@ int main(int argc, char *argv[])
         printf("%s: adr %s, port %hu\n", CMD,
                stringIP(ntohl(adrClient.sin_addr.s_addr)), ntohs(adrClient.sin_port));
 
+        /*
+        creates the thread which manage the communication between the server & the client
+        */
         dataThread = ajouterDataThread();
         if (dataThread == NULL)
             erreur_IO("ajouter data thread");
@@ -73,6 +98,9 @@ int main(int argc, char *argv[])
 
 void *sessionClient(void *arg)
 {
+    /*
+    initializes variables
+    */
     DataSpec *dataTh = (DataSpec *)arg;
     int canal;
     int fin = FAUX;
@@ -81,6 +109,8 @@ void *sessionClient(void *arg)
 
     canal = dataTh->canal;
 
+    lgLue = lireLigne(canal, ligne);
+    printf("Un joueur a rejoint la partie : %s\n", ligne);
     while (!fin)
     {
         lgLue = lireLigne(canal, ligne);
@@ -96,18 +126,7 @@ void *sessionClient(void *arg)
             printf("%s: fin client\n", CMD);
             fin = VRAI;
         }
-        else if (strcmp(ligne, "init") == 0)
-        {
-            printf("%s: remise a zero journal\n", CMD);
-            remiseAZeroJournal();
-        }
-        else if (ecrireLigne(fdJournal, ligne) != -1)
-        {
-            printf("%s: ligne de %d octets ecrite dans journal\n", CMD, lgLue);
-        }
-        else
-            erreur_IO("ecriture journal");
-    } // fin while
+    }
 
     if (close(canal) == -1)
         erreur_IO("fermeture canal");
@@ -115,14 +134,4 @@ void *sessionClient(void *arg)
     dataTh->libre = VRAI;
 
     pthread_exit(NULL);
-}
-
-void remiseAZeroJournal(void)
-{
-    if (close(fdJournal) == -1)
-        erreur_IO("raz journal - fermeture");
-
-    fdJournal = open("journal.log", O_WRONLY | O_TRUNC | O_APPEND, 0644);
-    if (fdJournal == -1)
-        erreur_IO("raz journal - ouverture");
 }

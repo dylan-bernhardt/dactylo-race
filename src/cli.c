@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
     char my_gamertag[50];
     int soc, ret;
     struct sockaddr_in *adrServ;
+    char ligne[LIGNE_MAX];
+    int lgLue;
 
     /*
     error if there are less than 2 arg
@@ -51,13 +53,6 @@ int main(int argc, char *argv[])
     if (ecrireLigne(soc, my_gamertag) == -1)
         erreur_IO("ecrireLigne");
 
-    /*
-    Asks if everyone is ready
-    */
-    ready();
-    /*if (ecrireLigne(soc, "ready") == -1)
-        erreur_IO("ecrireLigne");
-    */
     /*
     close the connection with the server
     */
