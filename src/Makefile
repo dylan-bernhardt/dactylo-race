@@ -2,7 +2,7 @@
 #
 include ../Makefile.inc
 
-EXE = srv cli
+EXE = client serveur
 
 ${EXE): ${APP}
 

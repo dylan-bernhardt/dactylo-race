@@ -12,7 +12,7 @@
 /*
   Taille maximale d'une ligne de texte
 */
-#define LIGNE_MAX 160
+#define LIGNE_MAX 2000
 
 /*
   lit une ligne de texte depuis le fichier ouvert 'fd'.
@@ -22,7 +22,7 @@
   la valeur LIGNE_MAX si la taille maximale a ete lue sans
   rencontrer '\n'.
 */
-int lireLigne (int fd, char *buffer) ;
+int lireLigne(int fd, char *buffer);
 
 /*
   ecrit une ligne de texte dans le fichier ouvert 'fd'.
@@ -33,7 +33,6 @@ int lireLigne (int fd, char *buffer) ;
   n'est pas ecrit),
   -1 en cas d'erreur
 */
-int ecrireLigne (int fd, char *buffer) ;
+int ecrireLigne(int fd, char *buffer);
 
 #endif
-
