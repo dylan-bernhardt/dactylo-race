@@ -63,6 +63,8 @@ int main(int argc, char *argv[])
         ;
     clear();
     printf("Objective : write the sentence as fast as possible : \n %s\n\n", sentence);
+    for (;;)
+        ;
     /*
     close the connection with the server
     */

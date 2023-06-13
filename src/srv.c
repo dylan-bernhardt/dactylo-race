@@ -2,7 +2,7 @@
 #include <pthread.h>
 
 #define CMD "serveur"
-
+#define NUMBER_OF_PLAYER 2
 struct Player
 {
     char gamertag[50];
@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     iniatilizes variables
     */
     short port;
-    int ecoute, canal, ret;
+    int ecoute, canal, ret, number_of_connexion = 0;
     struct sockaddr_in adrEcoute, adrClient;
     unsigned int lgAdrClient;
     DataThread *dataThread;
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     /*
     creates barrier to have max 2 players
     */
-    pthread_barrier_init(&B, NULL, 2);
+    pthread_barrier_init(&B, NULL, NUMBER_OF_PLAYER);
 
     /*
     reads the sentence that player will need to type
@@ -78,13 +78,13 @@ int main(int argc, char *argv[])
     if (ret < 0)
         erreur_IO("listen");
 
-    while (VRAI)
+    while (number_of_connexion < NUMBER_OF_PLAYER)
     {
         /*
         waits for a connexion and accepts it
         */
         printf("%s: accepting a connection\n", CMD);
-        canal = accept(ecoute, (struct sockaddr *)&adrClient, (socklen_t *restrict)&lgAdrClient);
+        canal = accept(ecoute, (struct sockaddr *)&adrClient, (socklen_t *)&lgAdrClient);
         if (canal < 0)
             erreur_IO("accept");
 
@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
             erreur_IO("creation thread");
 
         joinDataThread();
+        number_of_connexion++;
     }
 
     if (close(canal) == -1)
