@@ -1,4 +1,5 @@
 #include "app.h"
+#include <pthread.h>
 
 #define CMD "serveur"
 
@@ -7,6 +8,9 @@ struct Player
     char gamertag[50];
 };
 typedef struct Player Player;
+
+pthread_barrier_t B;
+char sentence[200];
 
 void *sessionClient(void *arg); /*thread*/
 
@@ -21,7 +25,23 @@ int main(int argc, char *argv[])
     unsigned int lgAdrClient;
     DataThread *dataThread;
 
+    /*
+    creates barrier to have max 2 players
+    */
+    pthread_barrier_init(&B, NULL, 2);
+
+    /*
+    reads the sentence that player will need to type
+    */
+    FILE *f = fopen("./sentences.txt", "r");
+    if (f == NULL)
+        erreur("ouverture du fichier");
+    fgets(sentence, 200, f);
+    puts("La phrase à écrire sera la suivante :");
+    puts(sentence);
+
     initDataThread();
+
     /*
     error if no argument
     */
@@ -64,7 +84,7 @@ int main(int argc, char *argv[])
         waits for a connexion and accepts it
         */
         printf("%s: accepting a connection\n", CMD);
-        canal = accept(ecoute, (struct sockaddr *)&adrClient, &lgAdrClient);
+        canal = accept(ecoute, (struct sockaddr *)&adrClient, (socklen_t *restrict)&lgAdrClient);
         if (canal < 0)
             erreur_IO("accept");
 
@@ -111,6 +131,14 @@ void *sessionClient(void *arg)
 
     lgLue = lireLigne(canal, ligne);
     printf("Un joueur a rejoint la partie : %s\n", ligne);
+    if (ecrireLigne(canal, ligne) == -1)
+        erreur_IO("ecrireLigne");
+
+    pthread_barrier_wait(&B);
+
+    if (ecrireLigne(canal, sentence) == -1)
+        erreur_IO("ecrire ligne");
+
     while (!fin)
     {
         lgLue = lireLigne(canal, ligne);

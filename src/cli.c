@@ -11,9 +11,8 @@ int main(int argc, char *argv[])
     char my_gamertag[50];
     int soc, ret;
     struct sockaddr_in *adrServ;
-    char ligne[LIGNE_MAX];
+    char ligne[LIGNE_MAX], sentence[200];
     int lgLue;
-
     /*
     error if there are less than 2 arg
     */
@@ -46,13 +45,24 @@ int main(int argc, char *argv[])
     */
     start();
     gamertag(my_gamertag);
-
     /*
     sends gamertag to the server
     */
     if (ecrireLigne(soc, my_gamertag) == -1)
         erreur_IO("ecrireLigne");
 
+    lgLue = lireLigne(soc, ligne);
+    if (lgLue < 0)
+        erreur_IO("lireLigne");
+
+    clear();
+    printf("Your gamertag is : %s\n\n\tWe are waiting for other players... please wait...\n", ligne);
+
+    lireLigne(soc, sentence);
+    while (sentence == NULL)
+        ;
+    clear();
+    printf("Objective : write the sentence as fast as possible : \n %s\n\n", sentence);
     /*
     close the connection with the server
     */
