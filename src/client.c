@@ -65,9 +65,15 @@ int main(int argc, char *argv[])
         }
     }
 
+    char players_in_order[NUMBER_OF_PLAYER][50];
+    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+        lireLigne(sock, players_in_order[i]);
+
+    puts("classement :");
+    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+        printf("%s\n", players_in_order[i]);
     for (;;)
-        puts("salut");
-    ;
+        ;
     if (close(sock) == -1)
         erreur_IO("close socket");
 
