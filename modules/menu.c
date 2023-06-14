@@ -21,6 +21,13 @@ void ready()
     clear();
 }
 
+void waiting()
+{
+    clear();
+    printf("Please wait for opponents");
+    puts("\n\n\n######################################################################");
+}
+
 void clear()
 {
     system("clear");

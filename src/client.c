@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
     int fin = FAUX;
     char ligne[LIGNE_MAX];
     int lgEcr;
+    char pseudo[50];
 
     if (argc != 3)
         erreur("usage: %s machine port\n", argv[0]);
@@ -34,6 +35,14 @@ int main(int argc, char *argv[])
 
     lireLigne(sock, ligne);
     puts(ligne);
+
+    start();
+    gamertag(pseudo);
+    while (1)
+    {
+        waiting();
+    }
+
     while (!fin)
     {
         printf("ligne> ");
