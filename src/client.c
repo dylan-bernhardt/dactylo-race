@@ -44,10 +44,22 @@ int main(int argc, char *argv[])
         if (lgEcr == -1)
             erreur_IO("ecrire ligne");
 
-        printf("%s: %d bytes sent\n", CMD, lgEcr);
-
-        if (strcmp(ligne, "fin\n") == 0)
+        lireLigne(sock, ligne);
+        puts(ligne);
+        if (strncmp(ligne, "faux", 3) != 0)
+        {
+            puts("tu as fini");
             fin = VRAI;
+        }
+    }
+
+    char **ranking = malloc(sizeof(char *) * NUMBER_OF_PLAYER);
+    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+    {
+        ranking[i] = malloc(sizeof(char) * 50);
+        lireLigne(sock, ranking[i]);
+        puts("----");
+        puts(ranking[i]);
     }
 
     if (close(sock) == -1)

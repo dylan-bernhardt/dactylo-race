@@ -1,8 +1,7 @@
 #ifndef APP_INCLUDE_H
 #define APP_INCLUDE_H
 
-/* pse.h: fichiers d'inclusion et quelques constantes utiles
-   pour les TP de programmation systeme. */
+#define NUMBER_OF_PLAYER 2
 
 #include <stdio.h>
 #include <stdlib.h>
