@@ -38,7 +38,14 @@ int main(int argc, char *argv[])
 
     start();
     gamertag(pseudo);
+    ecrireLigne(sock, pseudo);
     waiting();
+
+    lireLigne(sock, ligne);
+    if (strncmp(ligne, "ok", 2) != 0)
+        erreur_IO("pseudo");
+
+    compte_a_rebours();
 
     while (!fin)
     {
