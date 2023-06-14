@@ -28,6 +28,7 @@
 #include "datathread.h"
 #include "msgbox.h"
 #include "msg.h"
+#include "menu.h"
 
 #define FAUX 0
 #define VRAI 1
