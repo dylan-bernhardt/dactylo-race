@@ -23,7 +23,6 @@ void ready()
 
 void waiting()
 {
-    clear();
     printf("Please wait for opponents");
     puts("\n\n\n######################################################################");
 }
