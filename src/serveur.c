@@ -19,6 +19,7 @@ int player_session(Worker *worker);
 int get_sentence(char *file_path, char sentence[LIGNE_MAX]);
 int get_rank();
 void send_ranking_to_player(int canal);
+void send_ranking(int canal);
 
 Worker list_workers[NUMBER_OF_PLAYER];
 pthread_barrier_t everyone_has_finished;
@@ -119,7 +120,11 @@ void *thread_worker(void *arg)
         printf("%d", rank);
         fflush(stdout);
         pthread_barrier_wait(&everyone_has_finished);
-        printf("fini");
+        printf("\n\n\n\n");
+        for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+            printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);
+        send_ranking(worker->canal);
+        printf("PARTIE FINIE");
         fflush(stdout);
         worker->canal = -1;
     }
@@ -165,11 +170,27 @@ int get_sentence(char *file_path, char sentence[LIGNE_MAX])
 
 int get_rank()
 {
-    int rank = 1;
+    int rank = 0;
     for (int i = 0; i < NUMBER_OF_PLAYER; i++)
     {
         if (list_workers[i].rank != -1)
             rank++;
     }
     return rank;
+}
+
+void send_ranking(int canal)
+{
+    int sent = 0;
+    while (sent != NUMBER_OF_PLAYER)
+    {
+        for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+        {
+            if (list_workers[i].rank == sent)
+            {
+                sent++;
+                ecrireLigne(canal, list_workers[i].gamertag);
+            }
+        }
+    }
 }
