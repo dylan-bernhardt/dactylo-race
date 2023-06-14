@@ -2,7 +2,6 @@
 
 int main(void)
 {
-    compte_a_rebours();
-    podium("dylan", "phuilippe", "coco");
+    results("dylan", "theo", "coco");
     return 0;
 }

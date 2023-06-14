@@ -4,17 +4,7 @@
 void start()
 {
     clear();
-    printf("Welcome to our game ! Press enter to start\n\n");
-    fputs("            ", stdout);
-    puts("\n\n\n######################################################################");
-    getchar();
-    clear();
-}
-
-void ready()
-{
-    clear();
-    printf("Please press entrer when you are ready");
+    printf("Welcome to our game ! The goal is to write a phrase as fast as possible. Press enter to start\n\n");
     fputs("            ", stdout);
     puts("\n\n\n######################################################################");
     getchar();
@@ -120,4 +110,26 @@ void compte_a_rebours(void)
     usleep(1000000);
 
     clear();
+}
+
+void end(void)
+{
+    clear();
+    puts("Thank you for playing our game. See you next time !");
+    usleep(5000000);
+    system("clear");
+}
+
+void results(char *gamer1, char *gamer2, char *gamer3)
+{
+    puts("The game is finished. The winners are ....");
+    usleep(2000000);
+    podium(gamer1, gamer2, gamer3);
+    usleep(2000000);
+    puts("If you want to play angain, press P. Else, press E");
+    char trash = getchar();
+    if (trash == 'E')
+    {
+        end();
+    }
 }

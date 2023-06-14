@@ -7,8 +7,9 @@
 void start();
 void clear();
 void gamertag(char gamertag[50]);
-void ready();
 void waiting();
 void compte_a_rebours(void);
 void podium(char *gamer1, char *gamer2, char *gamer3);
+void end(void);
+void results(char *gamer1, char *gamer2, char *gamer3);
 #endif
