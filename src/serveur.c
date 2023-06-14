@@ -113,10 +113,9 @@ void *thread_worker(void *arg)
             usleep(100000);
         puts("yo jme reveille");
         int rank = player_session(worker->canal);
-        ecrireLigne(worker->canal, "Tu as fini");
         worker->rank = rank;
-        printf("%d\n", rank);
-        ecrireLigne(worker->canal, "pseudo\n");
+        printf("%d", rank);
+        fflush(stdout);
         pthread_barrier_wait(&everyone_has_finished);
         printf("fini");
         fflush(stdout);
@@ -137,6 +136,8 @@ int player_session(int canal)
         if (strncmp(ligne, sentence, length_of_sentence) == 0)
         {
             printf("gagné");
+            ecrireLigne(canal, "gagné\n");
+            fflush(stdout);
             return get_rank();
         }
         ecrireLigne(canal, "faux\n");

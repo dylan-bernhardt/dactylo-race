@@ -53,15 +53,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    char **ranking = malloc(sizeof(char *) * NUMBER_OF_PLAYER);
-    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-    {
-        ranking[i] = malloc(sizeof(char) * 50);
-        lireLigne(sock, ranking[i]);
-        puts("----");
-        puts(ranking[i]);
-    }
-
+    for (;;)
+        puts("salut");
+    ;
     if (close(sock) == -1)
         erreur_IO("close socket");
 
