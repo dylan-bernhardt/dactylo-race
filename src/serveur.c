@@ -15,17 +15,19 @@ typedef struct
 int seek_worker();
 void create_workers();
 void *thread_worker(void *arg);
-int player_session(int canal);
+int player_session(Worker *worker);
 int get_sentence(char *file_path, char sentence[LIGNE_MAX]);
 int get_rank();
 void send_ranking_to_player(int canal);
 
 Worker list_workers[NUMBER_OF_PLAYER];
 pthread_barrier_t everyone_has_finished;
+pthread_barrier_t enough_players;
 
 int main(int argc, char **argv)
 {
     pthread_barrier_init(&everyone_has_finished, NULL, NUMBER_OF_PLAYER);
+    pthread_barrier_init(&enough_players, NULL, NUMBER_OF_PLAYER);
     if (argc != 2)
         erreur("usage : %s port ", argv[0]);
     int ecoute, ret, canal, id_worker_libre;
@@ -112,7 +114,7 @@ void *thread_worker(void *arg)
         while (worker->canal < 0)
             usleep(100000);
         puts("yo jme reveille");
-        int rank = player_session(worker->canal);
+        int rank = player_session(worker);
         worker->rank = rank;
         printf("%d", rank);
         fflush(stdout);
@@ -124,11 +126,17 @@ void *thread_worker(void *arg)
     pthread_exit(NULL);
 }
 
-int player_session(int canal)
+int player_session(Worker *worker)
 {
+    int canal = worker->canal;
     char ligne[LIGNE_MAX];
-    char sentence[LIGNE_MAX];
+    char sentence[LIGNE_MAX], gamertag[50];
     int length_of_sentence = get_sentence("./sentences.txt", sentence);
+    lireLigne(canal, gamertag);
+    strcpy(worker->gamertag, gamertag);
+    printf("\n\n\n\n\n%s\n\n\n\n", worker->gamertag);
+    pthread_barrier_wait(&enough_players);
+    ecrireLigne(canal, "ok\n");
     ecrireLigne(canal, sentence);
     while (1)
     {

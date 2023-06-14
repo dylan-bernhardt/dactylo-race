@@ -33,20 +33,19 @@ int main(int argc, char *argv[])
     if (ret < 0)
         erreur_IO("connect");
 
-    lireLigne(sock, ligne);
-    puts(ligne);
-
     start();
     gamertag(pseudo);
     ecrireLigne(sock, pseudo);
     waiting();
-
     lireLigne(sock, ligne);
+
     if (strncmp(ligne, "ok", 2) != 0)
         erreur_IO("pseudo");
 
     compte_a_rebours();
 
+    lireLigne(sock, ligne);
+    puts(ligne);
     while (!fin)
     {
         printf("ligne> ");
