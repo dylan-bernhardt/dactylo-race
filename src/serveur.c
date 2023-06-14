@@ -13,12 +13,13 @@ typedef struct
     int rank;
 } Worker;
 
-int seek_worker(Worker *list_worker);
-void create_workers(Worker *list_worker);
+int seek_worker();
+void create_workers();
 void *thread_worker(void *arg);
 void player_session(int canal);
 int get_sentence(char *file_path, char sentence[LIGNE_MAX]);
 
+Worker list_workers[NUMBER_OF_PLAYER];
 int main(int argc, char **argv)
 {
     if (argc != 2)
@@ -30,7 +31,6 @@ int main(int argc, char **argv)
 
     port = (short)atoi(argv[1]);
 
-    Worker *list_workers = malloc(sizeof(Worker) * NUMBER_OF_PLAYER);
     create_workers(list_workers);
     /*
     creates the socket
@@ -77,22 +77,22 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void create_workers(Worker *list_worker)
+void create_workers()
 {
     for (int i = 0; i < NUMBER_OF_PLAYER; i++)
     {
-        list_worker[i].id = i;
-        list_worker[i].canal = -1;
-        list_worker[i].rank = -1;
-        pthread_create(&list_worker[i].thread, NULL, thread_worker, (void *)&list_worker[i]);
+        list_workers[i].id = i;
+        list_workers[i].canal = -1;
+        list_workers[i].rank = -1;
+        pthread_create(&list_workers[i].thread, NULL, thread_worker, (void *)&list_workers[i]);
     }
     return;
 }
 
-int seek_worker(Worker *list_worker)
+int seek_worker()
 {
     int i = 0;
-    while (list_worker[i].canal != -1 && i < NUMBER_OF_PLAYER)
+    while (list_workers[i].canal != -1 && i < NUMBER_OF_PLAYER)
         i++;
     if (i < NUMBER_OF_PLAYER)
         return i;
@@ -120,12 +120,10 @@ void player_session(int canal)
     char ligne[LIGNE_MAX];
     char sentence[LIGNE_MAX];
     int length_of_sentence = get_sentence("./sentences.txt", sentence);
-    printf("\n\n\n%d\n\n\n", length_of_sentence);
     ecrireLigne(canal, sentence);
     while (1)
     {
         lireLigne(canal, ligne);
-
         if (strncmp(ligne, sentence, length_of_sentence) == 0)
             puts("gagné");
     }
