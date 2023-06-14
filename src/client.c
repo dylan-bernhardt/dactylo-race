@@ -38,10 +38,9 @@ int main(int argc, char *argv[])
 
     start();
     gamertag(pseudo);
-    clear();
+    waiting();
     while (1)
     {
-        waiting();
     }
 
     while (!fin)
