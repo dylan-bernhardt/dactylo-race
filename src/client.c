@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     int sock, ret;
     struct sockaddr_in *adrServ;
-    int fin = FAUX;
+    int fin = FAUX, want_to_play = VRAI;
     char ligne[LIGNE_MAX];
     int lgEcr;
     char pseudo[50];
@@ -33,45 +33,53 @@ int main(int argc, char *argv[])
     if (ret < 0)
         erreur_IO("connect");
 
-    start();
-    gamertag(pseudo);
-    ecrireLigne(sock, pseudo);
-    waiting();
-    lireLigne(sock, ligne);
-
-    if (strncmp(ligne, "ok", 2) != 0)
-        erreur_IO("pseudo");
-
-    compte_a_rebours();
-
-    lireLigne(sock, ligne);
-    puts(ligne);
-    while (!fin)
+    while (want_to_play)
     {
-        printf("ligne> ");
-        if (fgets(ligne, LIGNE_MAX, stdin) == NULL)
-            erreur("saisie fin de fichier\n");
+        start();
+        gamertag(pseudo);
+        ecrireLigne(sock, pseudo);
+        waiting();
+        lireLigne(sock, ligne);
 
-        lgEcr = ecrireLigne(sock, ligne);
-        if (lgEcr == -1)
-            erreur_IO("ecrire ligne");
+        if (strncmp(ligne, "ok", 2) != 0)
+            erreur_IO("pseudo");
+
+        compte_a_rebours();
 
         lireLigne(sock, ligne);
         puts(ligne);
-        if (strncmp(ligne, "faux", 3) != 0)
+        while (!fin)
         {
-            puts("tu as fini");
-            fin = VRAI;
+            printf("ligne> ");
+            if (fgets(ligne, LIGNE_MAX, stdin) == NULL)
+                erreur("saisie fin de fichier\n");
+
+            lgEcr = ecrireLigne(sock, ligne);
+            if (lgEcr == -1)
+                erreur_IO("ecrire ligne");
+
+            lireLigne(sock, ligne);
+            puts(ligne);
+            if (strncmp(ligne, "faux", 3) != 0)
+            {
+                puts("tu as fini");
+                fin = VRAI;
+            }
+        }
+
+        char players_in_order[NUMBER_OF_PLAYER][50];
+        for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+            lireLigne(sock, players_in_order[i]);
+
+        results(players_in_order[0], players_in_order[1], players_in_order[2]);
+        char trash = getchar();
+        if (trash == 'E')
+        {
+            end();
+            want_to_play = FAUX;
         }
     }
 
-    char players_in_order[NUMBER_OF_PLAYER][50];
-    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-        lireLigne(sock, players_in_order[i]);
-
-    puts("classement :");
-    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-        printf("%s\n", players_in_order[i]);
     for (;;)
         ;
     if (close(sock) == -1)
