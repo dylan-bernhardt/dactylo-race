@@ -75,10 +75,10 @@ int main(int argc, char *argv[])
         char trash = getchar();
         if (trash == 'E')
         {
-            end();
             want_to_play = FAUX;
             strcpy(ligne, "rejoue_pas");
             ecrireLigne(sock, ligne);
+            end();
         }
         else
         {
