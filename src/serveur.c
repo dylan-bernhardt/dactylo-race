@@ -24,13 +24,11 @@ void send_ranking(int canal);
 Worker list_workers[NUMBER_OF_PLAYER];
 pthread_barrier_t everyone_has_finished;
 pthread_barrier_t enough_players;
-pthread_barrier_t replay;
 
 int main(int argc, char **argv)
 {
     pthread_barrier_init(&everyone_has_finished, NULL, NUMBER_OF_PLAYER);
     pthread_barrier_init(&enough_players, NULL, NUMBER_OF_PLAYER);
-    pthread_barrier_init(&replay, NULL, NUMBER_OF_PLAYER);
     if (argc != 2)
         erreur("usage : %s port ", argv[0]);
     int ecoute, ret, canal, id_worker_libre;
@@ -126,11 +124,15 @@ void *thread_worker(void *arg)
             printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);*/
         send_ranking(worker->canal);
         lireLigne(worker->canal, rejouer);
-        pthread_barrier_wait(&replay);
+
         printf("%s : %s\n", worker->gamertag, rejouer);
         fflush(stdout);
 
-        worker->canal = -1;
+        if (strncmp(rejouer, "rejoue_pas", LIGNE_MAX) != 0)
+        {
+            worker->canal = -1;
+            puts("ciao j'vais me coucher");
+        }
     }
     pthread_exit(NULL);
 }
@@ -143,7 +145,7 @@ int player_session(Worker *worker)
     int length_of_sentence = get_sentence("./sentences.txt", sentence);
     lireLigne(canal, gamertag);
     strcpy(worker->gamertag, gamertag);
-    printf("\n\n\n\n\n%s\n\n\n\n", worker->gamertag);
+    printf("\n%s is in the lobby\n\n", worker->gamertag);
     pthread_barrier_wait(&enough_players);
     ecrireLigne(canal, "ok\n");
     ecrireLigne(canal, sentence);

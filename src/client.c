@@ -34,11 +34,11 @@ int main(int argc, char *argv[])
         erreur_IO("connect");
 
     start();
-    gamertag(pseudo);
-    ecrireLigne(sock, pseudo);
 
     while (want_to_play)
     {
+        gamertag(pseudo);
+        ecrireLigne(sock, pseudo);
         waiting();
         lireLigne(sock, ligne);
 
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
         puts(ligne);
         while (!fin)
         {
-            printf("ligne> ");
+            printf("> ");
             if (fgets(ligne, LIGNE_MAX, stdin) == NULL)
                 erreur("saisie fin de fichier\n");
 
@@ -60,10 +60,9 @@ int main(int argc, char *argv[])
                 erreur_IO("ecrire ligne");
 
             lireLigne(sock, ligne);
-            puts(ligne);
+            puts("well done !");
             if (strncmp(ligne, "faux", 3) != 0)
             {
-                puts("tu as fini");
                 fin = VRAI;
             }
         }
