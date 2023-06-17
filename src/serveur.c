@@ -128,7 +128,7 @@ void *thread_worker(void *arg)
         printf("%s : %s\n", worker->gamertag, rejouer);
         fflush(stdout);
 
-        if (strncmp(rejouer, "rejoue_pas", LIGNE_MAX) != 0)
+        if (strncmp(rejouer, "rejoue_pas", 10) != 0)
         {
             worker->canal = -1;
             puts("ciao j'vais me coucher");
