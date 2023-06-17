@@ -124,7 +124,7 @@ void end(void)
 
 void results(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
 {
-    puts("The game is finished. The winners are ....");
+    puts("The game is finished. The winners are ....\n\n");
     usleep(2000000);
     podium(gamer1, gamer2, gamer3, gamer4);
     usleep(2000000);

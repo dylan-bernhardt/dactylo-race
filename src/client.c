@@ -33,11 +33,12 @@ int main(int argc, char *argv[])
     if (ret < 0)
         erreur_IO("connect");
 
+    start();
+    gamertag(pseudo);
+    ecrireLigne(sock, pseudo);
+
     while (want_to_play)
     {
-        start();
-        gamertag(pseudo);
-        ecrireLigne(sock, pseudo);
         waiting();
         lireLigne(sock, ligne);
 
@@ -77,11 +78,16 @@ int main(int argc, char *argv[])
         {
             end();
             want_to_play = FAUX;
+            strcpy(ligne, "rejoue_pas");
+            ecrireLigne(sock, ligne);
+        }
+        else
+        {
+            strcpy(ligne, "rejoue");
+            ecrireLigne(sock, ligne);
         }
     }
 
-    for (;;)
-        ;
     if (close(sock) == -1)
         erreur_IO("close socket");
 

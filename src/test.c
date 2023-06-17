@@ -2,7 +2,7 @@
 
 int main(void)
 {
-    results("dylan", "theo", "coco");
+    results("dylan", "theo", "coco", "remi");
 
     return 0;
 }

@@ -24,11 +24,13 @@ void send_ranking(int canal);
 Worker list_workers[NUMBER_OF_PLAYER];
 pthread_barrier_t everyone_has_finished;
 pthread_barrier_t enough_players;
+pthread_barrier_t replay;
 
 int main(int argc, char **argv)
 {
     pthread_barrier_init(&everyone_has_finished, NULL, NUMBER_OF_PLAYER);
     pthread_barrier_init(&enough_players, NULL, NUMBER_OF_PLAYER);
+    pthread_barrier_init(&replay, NULL, NUMBER_OF_PLAYER);
     if (argc != 2)
         erreur("usage : %s port ", argv[0]);
     int ecoute, ret, canal, id_worker_libre;
@@ -109,6 +111,7 @@ int seek_worker()
 
 void *thread_worker(void *arg)
 {
+    char rejouer[LIGNE_MAX];
     while (1)
     {
         Worker *worker = (Worker *)arg;
@@ -117,15 +120,16 @@ void *thread_worker(void *arg)
         puts("yo jme reveille");
         int rank = player_session(worker);
         worker->rank = rank;
-        printf("%d", rank);
         fflush(stdout);
         pthread_barrier_wait(&everyone_has_finished);
-        printf("\n\n\n\n");
-        for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-            printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);
+        /*for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+            printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);*/
         send_ranking(worker->canal);
-        printf("PARTIE FINIE");
+        lireLigne(worker->canal, rejouer);
+        pthread_barrier_wait(&replay);
+        printf("%s : %s\n", worker->gamertag, rejouer);
         fflush(stdout);
+
         worker->canal = -1;
     }
     pthread_exit(NULL);
@@ -148,7 +152,7 @@ int player_session(Worker *worker)
         lireLigne(canal, ligne);
         if (strncmp(ligne, sentence, length_of_sentence) == 0)
         {
-            printf("gagné");
+            /*printf("gagné");*/
             ecrireLigne(canal, "gagné\n");
             fflush(stdout);
             return get_rank();
