@@ -29,21 +29,20 @@ int main(int argc, char *argv[])
            ntohs(adrServ->sin_port));
 
     printf("%s: connecting the socket\n", CMD);
-    ret = connect(sock, (struct sockaddr *)adrServ, sizeof(struct sockaddr_in));
+    ret = connect(sock, (struct sockaddr *)adrServ, (socklen_t)sizeof(struct sockaddr_in));
     if (ret < 0)
         erreur_IO("connect");
 
     start();
     gamertag(pseudo);
-    ecrireLigne(sock, pseudo);
-
     while (want_to_play)
     {
+        ecrireLigne(sock, pseudo);
         int fin = FAUX;
 
         waiting();
         lireLigne(sock, ligne);
-
+        puts("je teste");
         if (strncmp(ligne, "ok", 2) != 0)
             erreur_IO("pseudo");
 
@@ -83,6 +82,10 @@ int main(int argc, char *argv[])
             strcpy(ligne, "exit");
             ecrireLigne(sock, ligne);
             end();
+        }
+        else
+        {
+            ecrireLigne(sock, "continue\n");
         }
     }
 

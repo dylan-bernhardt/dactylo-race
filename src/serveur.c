@@ -75,7 +75,8 @@ int main(int argc, char **argv)
 
         printf("%s: adr %s, port %hu\n", CMD,
                stringIP(ntohl(adrClient.sin_addr.s_addr)), ntohs(adrClient.sin_port));
-
+        for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+            printf("\n%d", list_workers[i].canal);
         if ((id_worker_libre = seek_worker(list_workers)) != -1)
         {
             list_workers[id_worker_libre].canal = canal;
@@ -98,13 +99,12 @@ void create_workers()
 
 int seek_worker()
 {
-    int i = 0;
-    while (list_workers[i].canal != -1 && i < NUMBER_OF_PLAYER)
-        i++;
-    if (i < NUMBER_OF_PLAYER)
-        return i;
-    else
-        return -1;
+    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+    {
+        if (list_workers[i].canal == -1)
+            return i;
+    }
+    return -1;
 }
 
 void *thread_worker(void *arg)
@@ -130,7 +130,7 @@ void *thread_worker(void *arg)
         printf("%s : %s\n", worker->gamertag, rejouer);
         fflush(stdout);
 
-        if (strncmp(rejouer, "exit", 1) == 0)
+        if (strncmp(rejouer, "exit", 4) == 0)
         {
             {
                 worker->canal = -1; // Réinitialise le canal
@@ -147,7 +147,6 @@ int player_session(Worker *worker)
     char ligne[LIGNE_MAX];
     char sentence[LIGNE_MAX], gamertag[50];
     int length_of_sentence = get_sentence("./sentences.txt", sentence);
-
     lireLigne(canal, gamertag);
     strcpy(worker->gamertag, gamertag);
     printf("\n%s is in the lobby\n\n", worker->gamertag);
