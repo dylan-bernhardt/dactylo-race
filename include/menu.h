@@ -9,7 +9,7 @@ void clear();
 void gamertag(char gamertag[50]);
 void waiting();
 void compte_a_rebours(void);
-void podium(char *gamer1, char *gamer2, char *gamer3);
+void podium(char *gamer1, char *gamer2, char *gamer3, char *gamer4);
 void end(void);
-void results(char *gamer1, char *gamer2, char *gamer3);
+void results(char *gamer1, char *gamer2, char *gamer3, char *gamer4);
 #endif

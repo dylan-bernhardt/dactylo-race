@@ -35,7 +35,7 @@ void gamertag(char gamertag[50])
     fgets(gamertag, 50, stdin);
 }
 
-void podium(char *gamer1, char *gamer2, char *gamer3)
+void podium(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
 {
     printf("                                    %s                                       \n", gamer1);
     printf("          %s                                                                 \n", gamer2);
@@ -48,6 +48,8 @@ void podium(char *gamer1, char *gamer2, char *gamer3)
     printf("((((((((       ((((((((###/////////////////////////###(((((((((     (((((((((\n");
     printf("(((((((((((((((((((((((###/////////////////////////###(((((((((  3  (((((((((\n");
     printf("(((((((((((((((((((((((###/////////////////////////###(((((((((     (((((((((\n");
+    printf("                                                                             \n");
+    printf("4. %s                                                                        \n", gamer4);
 }
 
 void compte_a_rebours(void)
@@ -120,16 +122,11 @@ void end(void)
     system("clear");
 }
 
-void results(char *gamer1, char *gamer2, char *gamer3)
+void results(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
 {
     puts("The game is finished. The winners are ....");
     usleep(2000000);
-    podium(gamer1, gamer2, gamer3);
+    podium(gamer1, gamer2, gamer3, gamer4);
     usleep(2000000);
     puts("If you want to play angain, press P. Else, press E");
-    char trash = getchar();
-    if (trash == 'E')
-    {
-        end();
-    }
 }

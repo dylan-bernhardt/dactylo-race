@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         for (int i = 0; i < NUMBER_OF_PLAYER; i++)
             lireLigne(sock, players_in_order[i]);
 
-        results(players_in_order[0], players_in_order[1], players_in_order[2]);
+        results(players_in_order[0], players_in_order[1], players_in_order[2], players_in_order[3]);
         char trash = getchar();
         if (trash == 'E')
         {
