@@ -1,7 +1,7 @@
 #ifndef APP_INCLUDE_H
 #define APP_INCLUDE_H
 
-#define NUMBER_OF_PLAYER 4
+#define NUMBER_OF_PLAYER 2
 
 #include <stdio.h>
 #include <stdlib.h>

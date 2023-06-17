@@ -109,16 +109,18 @@ int seek_worker()
 
 void *thread_worker(void *arg)
 {
-    char rejouer[LIGNE_MAX];
+    char rejouer[1];
     while (1)
     {
         Worker *worker = (Worker *)arg;
         while (worker->canal < 0)
             usleep(100000);
-        puts("yo jme reveille");
+        puts("worker actif");
+
         int rank = player_session(worker);
         worker->rank = rank;
         fflush(stdout);
+
         pthread_barrier_wait(&everyone_has_finished);
         /*for (int i = 0; i < NUMBER_OF_PLAYER; i++)
             printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);*/
@@ -128,10 +130,12 @@ void *thread_worker(void *arg)
         printf("%s : %s\n", worker->gamertag, rejouer);
         fflush(stdout);
 
-        if (strncmp(rejouer, "rejoue_pas", 10) != 0)
+        if (strncmp(rejouer, "exit", 1) == 0)
         {
-            worker->canal = -1;
-            puts("ciao j'vais me coucher");
+            {
+                worker->canal = -1; // Réinitialise le canal
+                puts("worker dort");
+            }
         }
     }
     pthread_exit(NULL);
@@ -143,6 +147,7 @@ int player_session(Worker *worker)
     char ligne[LIGNE_MAX];
     char sentence[LIGNE_MAX], gamertag[50];
     int length_of_sentence = get_sentence("./sentences.txt", sentence);
+
     lireLigne(canal, gamertag);
     strcpy(worker->gamertag, gamertag);
     printf("\n%s is in the lobby\n\n", worker->gamertag);
@@ -155,11 +160,11 @@ int player_session(Worker *worker)
         if (strncmp(ligne, sentence, length_of_sentence) == 0)
         {
             /*printf("gagné");*/
-            ecrireLigne(canal, "gagné\n");
+            ecrireLigne(canal, "well done !\n");
             fflush(stdout);
             return get_rank();
         }
-        ecrireLigne(canal, "faux\n");
+        ecrireLigne(canal, "wrong\n");
     }
 }
 

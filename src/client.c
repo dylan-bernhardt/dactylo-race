@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
 {
     int sock, ret;
     struct sockaddr_in *adrServ;
-    int fin = FAUX, want_to_play = VRAI;
+    int want_to_play = VRAI;
     char ligne[LIGNE_MAX];
     int lgEcr;
     char pseudo[50];
@@ -34,11 +34,13 @@ int main(int argc, char *argv[])
         erreur_IO("connect");
 
     start();
+    gamertag(pseudo);
+    ecrireLigne(sock, pseudo);
 
     while (want_to_play)
     {
-        gamertag(pseudo);
-        ecrireLigne(sock, pseudo);
+        int fin = FAUX;
+
         waiting();
         lireLigne(sock, ligne);
 
@@ -60,8 +62,8 @@ int main(int argc, char *argv[])
                 erreur_IO("ecrire ligne");
 
             lireLigne(sock, ligne);
-            puts("well done !");
-            if (strncmp(ligne, "faux", 3) != 0)
+            printf("%s\n", ligne);
+            if (strncmp(ligne, "wrong", 5) != 0)
             {
                 fin = VRAI;
             }
@@ -72,18 +74,15 @@ int main(int argc, char *argv[])
             lireLigne(sock, players_in_order[i]);
 
         results(players_in_order[0], players_in_order[1], players_in_order[2], players_in_order[3]);
-        char trash = getchar();
-        if (trash == 'E')
+
+        char res = getchar();
+
+        if (res == 'E')
         {
             want_to_play = FAUX;
-            strcpy(ligne, "rejoue_pas");
+            strcpy(ligne, "exit");
             ecrireLigne(sock, ligne);
             end();
-        }
-        else
-        {
-            strcpy(ligne, "rejoue");
-            ecrireLigne(sock, ligne);
         }
     }
 

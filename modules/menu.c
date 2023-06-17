@@ -4,10 +4,10 @@
 void start()
 {
     clear();
-    printf("Welcome to our game ! The goal is to write a phrase as fast as possible. Press enter to start\n\n");
+    printf("Welcome to our game ! The goal is to write a phrase as fast as possible.\n\n");
     fputs("            ", stdout);
     puts("\n\n\n######################################################################");
-    getchar();
+    usleep(5000000);
     clear();
 }
 
@@ -128,5 +128,5 @@ void results(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
     usleep(2000000);
     podium(gamer1, gamer2, gamer3, gamer4);
     usleep(2000000);
-    puts("If you want to play angain, press P. Else, press E");
+    puts("If you want to quit, press E. Else, press any.");
 }
