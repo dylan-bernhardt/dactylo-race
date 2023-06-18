@@ -1,3 +1,6 @@
+/*
+by Dylan BERNHARDT & Corentin BUNAUX
+*/
 #ifndef APP_INCLUDE_H
 #define APP_INCLUDE_H
 

@@ -1,3 +1,6 @@
+/*
+Fichier repris des tps de PSE
+*/
 #include <stdarg.h>
 #include "app.h"
 

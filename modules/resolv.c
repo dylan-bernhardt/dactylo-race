@@ -1,4 +1,6 @@
-/* module resolv: resolv.c */
+/*
+Fichier repris des tps de PSE
+*/
 
 #include "app.h"
 

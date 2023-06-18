@@ -1,3 +1,6 @@
+/*
+Fichier repris des tps de PSE
+*/
 /* Module de gestion de lignes de texte
    Voir documentation dans "ligne.h"
    (c) P Lalevée, 2012 */

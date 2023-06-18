@@ -1,3 +1,6 @@
+/*
+by Dylan BERNHARDT & Corentin BUNAUX
+*/
 #ifndef IF_MENU
 #define IF_MENU
 

@@ -1,3 +1,6 @@
+/*
+by Dylan BERNHARDT & Corentin BUNAUX
+*/
 #include <unistd.h>
 #include "menu.h"
 

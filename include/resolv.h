@@ -1,3 +1,6 @@
+/*
+Fichier repris des tps de PSE
+*/
 #ifndef RESOLV_INCLUDE_H
 #define RESOLV_INCLUDE_H
 
@@ -10,7 +13,7 @@
   en cas d'erreur, elle affiche un message et retourne NULL;
   la structure retournee est valide jusqu'au prochain appel a resolv
 */
-struct sockaddr_in *resolv (const char *host, const char *service) ;
+struct sockaddr_in *resolv(const char *host, const char *service);
 
 /*
   la fonction stringIP convertit une adresse IP exprimee sous forme d'un entier
@@ -23,4 +26,3 @@ struct sockaddr_in *resolv (const char *host, const char *service) ;
 char *stringIP(unsigned int entierIP);
 
 #endif
-

@@ -1,3 +1,6 @@
+/*
+by Dylan BERNHARDT & Corentin BUNAUX
+*/
 #include "worker.h"
 #include <stdio.h>
 #include "ligne.h"

@@ -1,3 +1,6 @@
+/*
+Fichier repris des tps de PSE
+*/
 #ifndef LIGNE_INCLUDE_H
 #define LIGNE_INCLUDE_H
 
