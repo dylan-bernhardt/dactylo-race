@@ -171,8 +171,13 @@ int player_session(Worker *worker)
 
 int get_sentence(char *file_path, char sentence[LIGNE_MAX])
 {
+    srand(time(NULL));
     FILE *f = fopen(file_path, "r");
-    fgets(sentence, 2000, f);
+    int k = rand() % 5;
+    for (int j = 0; j < k; j++)
+    {
+        fgets(sentence, 2000, f);
+    }
     fclose(f);
     int i = 0;
     while (sentence[i++])

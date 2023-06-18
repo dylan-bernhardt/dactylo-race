@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
             lgEcr = ecrireLigne(sock, ligne);
             if (lgEcr == -1)
                 erreur_IO("ecrire ligne");
-
             lireLigne(sock, ligne);
             printf("%s\n", ligne);
             if (strncmp(ligne, "wrong", 5) != 0)

@@ -2,7 +2,7 @@
 #
 include ../Makefile.inc
 
-EXE = client serveur test
+EXE = client serveur
 
 ${EXE): ${APP}
 
