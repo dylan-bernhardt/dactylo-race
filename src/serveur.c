@@ -69,7 +69,7 @@ int main(int argc, char **argv)
         waits for a connexion and accepts it
         */
         printf("%s: accepting a connection\n", CMD);
-        canal = accept(ecoute, (struct sockaddr *)&adrClient, (socklen_t *)&lgAdrClient);
+        canal = accept((int)ecoute, (struct sockaddr *)&adrClient, (socklen_t *)&lgAdrClient);
         if (canal < 0)
             erreur_IO("accept");
 
@@ -113,6 +113,7 @@ void *thread_worker(void *arg)
     while (1)
     {
         Worker *worker = (Worker *)arg;
+        worker->rank = -1;
         while (worker->canal < 0)
             usleep(100000);
         puts("worker actif");
@@ -122,6 +123,7 @@ void *thread_worker(void *arg)
         fflush(stdout);
 
         pthread_barrier_wait(&everyone_has_finished);
+        puts("passe la barrière");
         /*for (int i = 0; i < NUMBER_OF_PLAYER; i++)
             printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);*/
         send_ranking(worker->canal);

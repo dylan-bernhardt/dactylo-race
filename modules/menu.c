@@ -48,6 +48,10 @@ void podium(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
     printf("((((((((       ((((((((###/////////////////////////###(((((((((     (((((((((\n");
     printf("(((((((((((((((((((((((###/////////////////////////###(((((((((  3  (((((((((\n");
     printf("(((((((((((((((((((((((###/////////////////////////###(((((((((     (((((((((\n");
+    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
+    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
+    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
+    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
     printf("                                                                             \n");
     printf("4. %s                                                                        \n", gamer4);
 }
@@ -58,16 +62,16 @@ void compte_a_rebours(void)
 
     puts("\t\t             @@@@@@@@@@@@");
     puts("\t\t           @@             @");
-    puts("\t\t          @@@@@@@@         @");
-    puts("\t\t         @@      @@       @@");
+    puts("\t\t           @@@@@@@         @");
+    puts("\t\t                 @@       @@");
     puts("\t\t                  @       @");
     puts("\t\t            @@@@@@@     @@");
     puts("\t\t          @@           @");
     puts("\t\t          @@           @");
     puts("\t\t            @@@@@@@     @@");
     puts("\t\t                  @       @");
-    puts("\t\t         @@      @@       @@");
-    puts("\t\t          @@@@@@@@         @");
+    puts("\t\t                 @@       @@");
+    puts("\t\t           @@@@@@@         @");
     puts("\t\t           @@             @");
     puts("\t\t             @@@@@@@@@@@@");
 
@@ -77,13 +81,13 @@ void compte_a_rebours(void)
 
     puts("\t\t              @@@@@@@@@@@");
     puts("\t\t            @             @");
-    puts("\t\t           @     @         @");
+    puts("\t\t           @     @@@@      @");
     puts("\t\t          @     @    @     @");
-    puts("\t\t         @@@@@@       @    @");
-    puts("\t\t                      ,    @");
+    puts("\t\t         @@@@@@@      @    @");
+    puts("\t\t                     @    @");
     puts("\t\t                    @     @");
     puts("\t\t                  @     @");
-    puts("\t\t                @,     @");
+    puts("\t\t                @      @");
     puts("\t\t              @      @");
     puts("\t\t            @      @");
     puts("\t\t           @      @@@@@@@@@@@");
@@ -94,19 +98,19 @@ void compte_a_rebours(void)
 
     clear();
 
-    puts("\t\t                  (@@@@ ");
-    puts("\t\t                @&   *@ ");
-    puts("\t\t             /@      *@ ");
-    puts("\t\t          @@         *@ ");
-    puts("\t\t        @            *@ ");
-    puts("\t\t        @    .@ (    *@ ");
-    puts("\t\t        @ @@   .@    *@ ");
-    puts("\t\t                @    *@ ");
-    puts("\t\t                @    *@ ");
-    puts("\t\t                @    *@ ");
-    puts("\t\t                @    *@ ");
+    puts("\t\t                  @@@@@");
+    puts("\t\t                @@    @");
+    puts("\t\t             @@       @");
+    puts("\t\t          @@          @");
+    puts("\t\t        @             @");
+    puts("\t\t        @    @@@@     @");
+    puts("\t\t        @@@@@   @     @");
+    puts("\t\t                @     @");
+    puts("\t\t                @     @");
+    puts("\t\t                @     @");
+    puts("\t\t                @     @");
     puts("\t\t           @@@@@@    @@@@@@");
-    puts("\t\t           @              @ ");
+    puts("\t\t           @              @");
     puts("\t\t           @@@@@@@@@@@@@@@@");
 
     usleep(1000000);
@@ -126,6 +130,7 @@ void results(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
 {
     puts("The game is finished. The winners are ....\n\n");
     usleep(2000000);
+    clear();
     podium(gamer1, gamer2, gamer3, gamer4);
     usleep(2000000);
     puts("If you want to quit, press E. Else, press any.");

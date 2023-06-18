@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
            ntohs(adrServ->sin_port));
 
     printf("%s: connecting the socket\n", CMD);
-    ret = connect(sock, (struct sockaddr *)adrServ, (socklen_t)sizeof(struct sockaddr_in));
+    ret = connect(sock, (struct sockaddr *)adrServ, sizeof(struct sockaddr_in));
     if (ret < 0)
         erreur_IO("connect");
 
