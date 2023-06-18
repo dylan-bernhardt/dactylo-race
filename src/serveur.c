@@ -15,8 +15,8 @@ typedef struct
 int seek_worker();
 void create_workers();
 void *thread_worker(void *arg);
-int player_session(Worker *worker);
-int get_sentence(char *file_path, char sentence[LIGNE_MAX]);
+int player_session(Worker *worker, int random);
+int get_sentence(char *file_path, char sentence[LIGNE_MAX], int random);
 int get_rank();
 void send_ranking_to_player(int canal);
 void send_ranking(int canal);
@@ -110,6 +110,8 @@ int seek_worker()
 void *thread_worker(void *arg)
 {
     char rejouer[1];
+    srand(time(NULL));
+    int random;
     while (1)
     {
         Worker *worker = (Worker *)arg;
@@ -118,8 +120,13 @@ void *thread_worker(void *arg)
             usleep(100000);
         puts("worker actif");
 
-        int rank = player_session(worker);
-        worker->rank = rank;
+        random = rand() % 7;
+        if (random == 0)
+        {
+            random = 1;
+        }
+
+        worker->rank = player_session(worker, random);
         fflush(stdout);
 
         pthread_barrier_wait(&everyone_has_finished);
@@ -143,12 +150,12 @@ void *thread_worker(void *arg)
     pthread_exit(NULL);
 }
 
-int player_session(Worker *worker)
+int player_session(Worker *worker, int random)
 {
     int canal = worker->canal;
     char ligne[LIGNE_MAX];
     char sentence[LIGNE_MAX], gamertag[50];
-    int length_of_sentence = get_sentence("./sentences.txt", sentence);
+    int length_of_sentence = get_sentence("./sentences.txt", sentence, random);
     lireLigne(canal, gamertag);
     strcpy(worker->gamertag, gamertag);
     printf("\n%s is in the lobby\n\n", worker->gamertag);
@@ -169,15 +176,21 @@ int player_session(Worker *worker)
     }
 }
 
-int get_sentence(char *file_path, char sentence[LIGNE_MAX])
+int get_sentence(char *file_path, char sentence[LIGNE_MAX], int random)
 {
     FILE *f = fopen(file_path, "r");
-    fgets(sentence, 2000, f);
+    for (int i = 0; i < random; i++)
+    {
+        fgets(sentence, 2000, f);
+    }
+    printf("%s\n", sentence);
+
     fclose(f);
+
     int i = 0;
     while (sentence[i++])
         ;
-    return i - 1;
+    return i - 2;
 }
 
 int get_rank()
