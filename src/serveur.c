@@ -13,6 +13,7 @@ int main(int argc, char **argv)
     /*
     initializes the barriers
     */
+    puts("Bienvenue sur l'interface du serveur.\nPour le fermer : ctrl+c ou ctrl+shift+c\nChaque message afficher ici commence par [n] où n est le numéro du worker qui affiche le message. \n=================================\n");
     pthread_barrier_init(&everyone_has_finished, NULL, NUMBER_OF_PLAYER);
     pthread_barrier_init(&enough_players, NULL, NUMBER_OF_PLAYER);
 
@@ -73,6 +74,11 @@ int main(int argc, char **argv)
         if ((id_worker_libre = seek_worker(list_workers, NUMBER_OF_PLAYER)) != -1)
         {
             list_workers[id_worker_libre].canal = canal;
+            ecrireLigne(canal, "ok\n");
+        }
+        else
+        {
+            ecrireLigne(canal, "Number of player max reached, sorry. Try later !\n");
         }
     }
     return 0;

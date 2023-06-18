@@ -44,6 +44,12 @@ int main(int argc, char *argv[])
     if (ret < 0)
         erreur_IO("connect");
 
+    lireLigne(sock, ligne);
+    if (strncmp(ligne, "ok", 2) != 0)
+    {
+        puts("Number of player max reached. Please try later !");
+        return 0;
+    }
     display_start();
     ask_gamertag(gamertag);
     while (want_to_play)
