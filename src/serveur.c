@@ -1,37 +1,27 @@
 
 #include "app.h"
-
 #define CMD "serveur"
 
-typedef struct
-{
-    pthread_t thread;
-    int canal;
-    int id;
-    char gamertag[50];
-    int rank;
-} Worker;
-
-int seek_worker();
-void create_workers();
-void *thread_worker(void *arg);
-int player_session(Worker *worker, int random);
-int get_sentence(char *file_path, char sentence[LIGNE_MAX], int random);
-int get_rank();
-void send_ranking_to_player(int canal);
-void send_ranking(int canal);
-int gamertag_taken(char pseudo[50]);
+void *thread_worker(void *arg);                           /* thread that manages the game for a player */
+int player_session(Worker *worker, int number_of_player); /* function called in the thread */
 
 Worker list_workers[NUMBER_OF_PLAYER];
-pthread_barrier_t everyone_has_finished;
-pthread_barrier_t enough_players;
+pthread_barrier_t everyone_has_finished, enough_players;
 
 int main(int argc, char **argv)
 {
+    /*
+    initializes the barriers
+    */
     pthread_barrier_init(&everyone_has_finished, NULL, NUMBER_OF_PLAYER);
     pthread_barrier_init(&enough_players, NULL, NUMBER_OF_PLAYER);
+
+    /*
+    error if the program is poorly executed
+    */
     if (argc != 2)
         erreur("usage : %s port ", argv[0]);
+
     int ecoute, ret, canal, id_worker_libre;
     short port;
     struct sockaddr_in adrEcoute, adrClient;
@@ -39,7 +29,11 @@ int main(int argc, char **argv)
 
     port = (short)atoi(argv[1]);
 
-    create_workers(list_workers);
+    /*
+    initalizes workers
+    */
+    create_workers(list_workers, NUMBER_OF_PLAYER, thread_worker);
+
     /*
     creates the socket
     */
@@ -67,16 +61,16 @@ int main(int argc, char **argv)
     while (VRAI)
     {
         /*
-        waits for a connexion and accepts it
+        infinite loop accepting connexions and assigning worker if it is possible
         */
-        printf("%s: accepting a connection\n", CMD);
+        puts("Waiting for connexion...");
         canal = accept((int)ecoute, (struct sockaddr *)&adrClient, (socklen_t *)&lgAdrClient);
         if (canal < 0)
             erreur_IO("accept");
 
         printf("%s: adr %s, port %hu\n", CMD,
                stringIP(ntohl(adrClient.sin_addr.s_addr)), ntohs(adrClient.sin_port));
-        if ((id_worker_libre = seek_worker(list_workers)) != -1)
+        if ((id_worker_libre = seek_worker(list_workers, NUMBER_OF_PLAYER)) != -1)
         {
             list_workers[id_worker_libre].canal = canal;
         }
@@ -84,90 +78,49 @@ int main(int argc, char **argv)
     return 0;
 }
 
-void create_workers()
-{
-    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-    {
-        list_workers[i].id = i;
-        list_workers[i].canal = -1;
-        list_workers[i].rank = -1;
-        pthread_create(&list_workers[i].thread, NULL, thread_worker, (void *)&list_workers[i]);
-    }
-    return;
-}
-
-int seek_worker()
-{
-    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-    {
-        if (list_workers[i].canal == -1)
-            return i;
-    }
-    return -1;
-}
-
 void *thread_worker(void *arg)
 {
-    char rejouer[1];
-    srand(time(NULL));
-    int random;
+    char rejouer[4];
     while (1)
     {
         Worker *worker = (Worker *)arg;
         worker->rank = -1;
         while (worker->canal < 0)
             usleep(100000);
-        puts("worker actif");
+        printf("[%d] worker actif\n", worker->index);
 
-        random = rand() % 7;
-        if (random == 0)
-        {
-            random = 1;
-        }
-
-        worker->rank = player_session(worker, random);
+        worker->rank = player_session(worker, NUMBER_OF_PLAYER);
         fflush(stdout);
 
         pthread_barrier_wait(&everyone_has_finished);
-        /*for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-            printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);*/
-        send_ranking(worker->canal);
+        send_ranking(list_workers, worker->canal, NUMBER_OF_PLAYER);
         lireLigne(worker->canal, rejouer);
 
-        printf("%s : %s\n", worker->gamertag, rejouer);
+        printf("[%d] %s : %s\n", worker->index, worker->gamertag, rejouer);
         fflush(stdout);
 
         if (strncmp(rejouer, "exit", 4) == 0)
         {
             {
-                worker->canal = -1; // Réinitialise le canal
-                puts("worker dort");
+                worker->canal = -1;
+                printf("[%d] worker dort", worker->index);
             }
         }
     }
     pthread_exit(NULL);
 }
 
-int player_session(Worker *worker, int random)
+int player_session(Worker *worker, int number_of_player)
 {
     int canal = worker->canal;
     char ligne[LIGNE_MAX];
-    char sentence[LIGNE_MAX], gamertag[50], valid[7];
-    int length_of_sentence = get_sentence("./sentences.txt", sentence, random);
+    char sentence[LIGNE_MAX], gamertag[50];
+    int length_of_sentence = get_sentence("./sentences.txt", sentence);
 
     lireLigne(canal, gamertag);
-    /*if (gamertag_taken(gamertag))
-    {
-        ecrireLigne(canal, "not_ok");
-        printf("taken\n");
-        lireLigne(canal, gamertag);
-    }*/
-    /*ecrireLigne(canal, "not_taken");*/
-    strcpy(valid, "ok");
     strcpy(worker->gamertag, gamertag);
 
-    printf("\n%s is in the lobby\n\n", worker->gamertag);
-    ecrireLigne(canal, valid);
+    printf("[%d] %s is in the lobby\n", worker->index, worker->gamertag);
     pthread_barrier_wait(&enough_players);
     ecrireLigne(canal, "ok\n");
     ecrireLigne(canal, sentence);
@@ -176,71 +129,10 @@ int player_session(Worker *worker, int random)
         lireLigne(canal, ligne);
         if (strncmp(ligne, sentence, length_of_sentence) == 0)
         {
-            /*printf("gagné");*/
-            ecrireLigne(canal, "well done !\n");
+            ecrireLigne(canal, "Well done !\n");
             fflush(stdout);
-            return get_rank();
+            return get_rank(list_workers, number_of_player);
         }
-        ecrireLigne(canal, "wrong\n");
+        ecrireLigne(canal, "Wrong, please try again...\n");
     }
-}
-
-int get_sentence(char *file_path, char sentence[LIGNE_MAX], int random)
-{
-    FILE *f = fopen(file_path, "r");
-    for (int i = 0; i < random; i++)
-    {
-        fgets(sentence, 2000, f);
-    }
-    printf("%s\n", sentence);
-
-    fclose(f);
-
-    int i = 0;
-    while (sentence[i++])
-        ;
-    return i - 2;
-}
-
-int get_rank()
-{
-    int rank = 0;
-    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-    {
-        if (list_workers[i].rank != -1)
-            rank++;
-    }
-    return rank;
-}
-
-void send_ranking(int canal)
-{
-    int sent = 0;
-    while (sent != NUMBER_OF_PLAYER)
-    {
-        for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-        {
-            if (list_workers[i].rank == sent)
-            {
-                sent++;
-                ecrireLigne(canal, list_workers[i].gamertag);
-            }
-        }
-    }
-}
-
-int gamertag_taken(char pseudo[50])
-{
-    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-    {
-        if (strncmp(list_workers[i].gamertag, pseudo, strlen(pseudo)) == 0)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
-    }
-    return -1;
 }

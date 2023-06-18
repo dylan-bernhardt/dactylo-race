@@ -9,6 +9,6 @@ ${EXE): ${APP}
 all: ${EXE}
 
 clean:
-	rm -f *.o *~ ${EXE} journal.log
+	rm -f *.o *~ ${EXE} 
 
 

@@ -1,15 +1,17 @@
+#ifndef IF_MENU
+#define IF_MENU
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
 
-#ifndef YO
-void start();
+void display_start();
 void clear();
-void gamertag(char gamertag[50]);
+void ask_gamertag(char gamertag[50]);
 void waiting();
 void compte_a_rebours(void);
-void podium(char *gamer1, char *gamer2, char *gamer3, char *gamer4);
-void end(void);
-void results(char *gamer1, char *gamer2, char *gamer3, char *gamer4);
+void display_end(void);
+void display_results(char *g1, char *g2, char *g3, char *g4);
+
 #endif

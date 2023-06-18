@@ -1,7 +1,7 @@
 #include <unistd.h>
 #include "menu.h"
 
-void start()
+void display_start()
 {
     clear();
     printf("Welcome to our game ! The goal is to write a phrase as fast as possible.\n\n");
@@ -29,31 +29,10 @@ void clear()
     return;
 }
 
-void gamertag(char gamertag[50])
+void ask_gamertag(char gamertag[50])
 {
     printf("\tChose a gamertag : \t");
     fgets(gamertag, 50, stdin);
-}
-
-void podium(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
-{
-    printf("                                    %s                                       \n", gamer1);
-    printf("          %s                                                                 \n", gamer2);
-    printf("                                                                   %s          \n", gamer3);
-    printf("                          /////////////////////////                          \n");
-    printf("                          /////////      //////////                          \n");
-    printf("(((((((((((((((((((((((###/////////  1   //////////                          \n");
-    printf("((((((((       ((((((((###/////////      //////////                          \n");
-    printf("((((((((   2   ((((((((###/////////////////////////###(((((((((((((((((((((((\n");
-    printf("((((((((       ((((((((###/////////////////////////###(((((((((     (((((((((\n");
-    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((  3  (((((((((\n");
-    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((     (((((((((\n");
-    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
-    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
-    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
-    printf("(((((((((((((((((((((((###/////////////////////////###(((((((((((((((((((((((\n");
-    printf("                                                                             \n");
-    printf("4. %s                                                                        \n", gamer4);
 }
 
 void compte_a_rebours(void)
@@ -118,7 +97,7 @@ void compte_a_rebours(void)
     clear();
 }
 
-void end(void)
+void display_end(void)
 {
     clear();
     puts("Thank you for playing our game. See you next time !");
@@ -126,12 +105,17 @@ void end(void)
     system("clear");
 }
 
-void results(char *gamer1, char *gamer2, char *gamer3, char *gamer4)
+void display_results(char *g1, char *g2, char *g3, char *g4)
 {
+    clear();
     puts("The game is finished. The winners are ....\n\n");
     usleep(2000000);
     clear();
-    podium(gamer1, gamer2, gamer3, gamer4);
-    usleep(2000000);
-    puts("If you want to quit, press E. Else, press any.");
+    printf("[1] : %s \n =================================== \n", g1);
+    printf("[2] : %s \n =================================== \n", g2);
+    printf("[3] : %s \n =================================== \n", g3);
+    printf("[4] : %s \n =================================== \n", g4);
+    usleep(5000000);
+    clear();
+    puts("If you want to quit, press q. Else, press any.");
 }
