@@ -20,6 +20,7 @@ int get_sentence(char *file_path, char sentence[LIGNE_MAX], int random);
 int get_rank();
 void send_ranking_to_player(int canal);
 void send_ranking(int canal);
+int gamertag_taken(char pseudo[50]);
 
 Worker list_workers[NUMBER_OF_PLAYER];
 pthread_barrier_t everyone_has_finished;
@@ -75,8 +76,6 @@ int main(int argc, char **argv)
 
         printf("%s: adr %s, port %hu\n", CMD,
                stringIP(ntohl(adrClient.sin_addr.s_addr)), ntohs(adrClient.sin_port));
-        for (int i = 0; i < NUMBER_OF_PLAYER; i++)
-            printf("\n%d", list_workers[i].canal);
         if ((id_worker_libre = seek_worker(list_workers)) != -1)
         {
             list_workers[id_worker_libre].canal = canal;
@@ -130,7 +129,6 @@ void *thread_worker(void *arg)
         fflush(stdout);
 
         pthread_barrier_wait(&everyone_has_finished);
-        puts("passe la barrière");
         /*for (int i = 0; i < NUMBER_OF_PLAYER; i++)
             printf("%s %d", list_workers[i].gamertag, list_workers[i].rank);*/
         send_ranking(worker->canal);
@@ -154,11 +152,22 @@ int player_session(Worker *worker, int random)
 {
     int canal = worker->canal;
     char ligne[LIGNE_MAX];
-    char sentence[LIGNE_MAX], gamertag[50];
+    char sentence[LIGNE_MAX], gamertag[50], valid[7];
     int length_of_sentence = get_sentence("./sentences.txt", sentence, random);
+
     lireLigne(canal, gamertag);
+    /*if (gamertag_taken(gamertag))
+    {
+        ecrireLigne(canal, "not_ok");
+        printf("taken\n");
+        lireLigne(canal, gamertag);
+    }*/
+    /*ecrireLigne(canal, "not_taken");*/
+    strcpy(valid, "ok");
     strcpy(worker->gamertag, gamertag);
+
     printf("\n%s is in the lobby\n\n", worker->gamertag);
+    ecrireLigne(canal, valid);
     pthread_barrier_wait(&enough_players);
     ecrireLigne(canal, "ok\n");
     ecrireLigne(canal, sentence);
@@ -218,4 +227,20 @@ void send_ranking(int canal)
             }
         }
     }
+}
+
+int gamertag_taken(char pseudo[50])
+{
+    for (int i = 0; i < NUMBER_OF_PLAYER; i++)
+    {
+        if (strncmp(list_workers[i].gamertag, pseudo, strlen(pseudo)) == 0)
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    return -1;
 }

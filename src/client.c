@@ -38,9 +38,17 @@ int main(int argc, char *argv[])
     while (want_to_play)
     {
         ecrireLigne(sock, pseudo);
+        lireLigne(sock, ligne);
+        /*while (strncmp(ligne, "not_ok", 6) == 0)
+        {
+            puts("gamertag already taken\n");
+            gamertag(pseudo);
+            ecrireLigne(sock, ligne);
+        }*/
         int fin = FAUX;
 
         waiting();
+
         lireLigne(sock, ligne);
         puts("je teste");
         if (strncmp(ligne, "ok", 2) != 0)
